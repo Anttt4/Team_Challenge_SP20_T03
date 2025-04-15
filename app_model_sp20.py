@@ -57,8 +57,8 @@ def predict():
           or day is None or month is None or duration is None or campaign is None or pdays is None or previous is None:
         return "Args empty, not enough data to predict"
     else:
-        prediction = model.predict([[float(age),object(job),object(marital),object(education),object(default),float(balance),object(housing),object(loan), \
-                                    float(day),object(month),float(duration),float(campaign),float(pdays),float(previous)]])
+        prediction = model.predict([[float(age),job,marital,education,default,float(balance),housing,loan,\
+                                     float(day),month,float(duration),float(campaign),float(pdays),float(previous)]])
     
     return jsonify({'predictions': prediction[0]})
 
