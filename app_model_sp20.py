@@ -31,7 +31,7 @@ def visualization():
 
 # Enruta la funcion al endpoint /api/v1/predict
 
-@app.route('/api/v1/predict', methods=['POST'])
+@app.route('/api/v1/predict', methods=['GET','POST'])
 def predict():
     with open('modelo_pipeline.pkl', 'rb') as f:
         model = pickle.load(f)
