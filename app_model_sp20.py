@@ -16,7 +16,7 @@ app = Flask(__name__)
 
 @app.route('/', methods=['GET'])
 def hello():
-    return "Bienvenido a la API del modelo 'Prediction of an adquisition bank service by a customer'"
+    return "Bienvenido a la API del modelo 'Predicting a customer's acquisition of a banking service'"
 
 
 
@@ -89,5 +89,5 @@ def predict():
 #         return f"<h2>New data for retrain NOT FOUND. Nothing done!</h2>"
 
 
-# if __name__ == '__main__':
-#     app.run(debug=True)
+if __name__ == '__main__':
+    app.run(debug=True)
