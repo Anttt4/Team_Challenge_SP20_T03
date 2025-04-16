@@ -17,7 +17,7 @@ app = Flask(__name__)
 
 @app.route('/', methods=['GET'])
 def hello():
-    return 'Bienvenido a la API del modelo: Predicting a customer's acquisition of a banking service'
+    return "Bienvenido a la API del modelo: Predicting a customer's acquisition of a banking service"
 
 
 
