@@ -127,7 +127,7 @@ def predict():
 
     return jsonify({ # Return the prediction
             # "prediction": int(prediction),
-            "¿contratará el depósito?": label
+            "¿contratara el deposito?": label
         }) 
 
 if __name__ == '__main__':
