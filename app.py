@@ -1,19 +1,21 @@
 from flask import Flask, jsonify, request, Response
-# import os
+import os
+import sys  
 
 import numpy as np
 import pandas as pd
 import xgboost
 import joblib
 
+# from sklearn.model_selection import train_test_split
+# from sklearn.ensemble import RandomForestClassifier
+
 def cat_binary(df):
     df["default"] = df["default"] == "yes"
     df["housing"] = df["housing"] == "yes"
     df["loan"] = df["loan"] == "yes"
     return df
-
-# from sklearn.model_selection import train_test_split
-# from sklearn.ensemble import RandomForestClassifier
+sys.modules['__main__'].cat_binary = cat_binary
 
 app = Flask(__name__)
 
@@ -130,3 +132,8 @@ def predict():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+# if __name__ == '__main__':
+#     from os import environ
+#     port = int(environ.get("PORT", 5000))
+#     app.run(debug=True, host="0.0.0.0", port=port)
