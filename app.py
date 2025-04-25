@@ -189,6 +189,9 @@ def retrain():
         with open('ad_model.pkl', 'wb') as f:
             joblib.dump(model, f)
 
+        X_test = data.drop(columns=['deposit'])
+        y_test = data['deposit'].map({'yes': 1, 'no': 0})  # Convertir a numérico
+
         return f"Model retrained. New evaluation metric: {classification_report(y_test, model.predict(X_test))}"
     else:
         return f"<h2>New data for retrain NOT FOUND. Nothing done!</h2>"
