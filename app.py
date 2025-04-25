@@ -189,7 +189,7 @@ def retrain():
         with open('ad_model.pkl', 'wb') as f:
             joblib.dump(model, f)
 
-        return f"Model retrained. New evaluation metric: {classification_report(y_test, modelo.predict(X_test))}"
+        return f"Model retrained. New evaluation metric: {classification_report(y_test, model.predict(X_test))}"
     else:
         return f"<h2>New data for retrain NOT FOUND. Nothing done!</h2>"
 
