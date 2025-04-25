@@ -4,7 +4,17 @@ import sys
 
 import numpy as np
 import pandas as pd
+
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import FunctionTransformer
+from sklearn.feature_selection import SelectFromModel
+from sklearn.metrics import classification_report
+from sklearn.ensemble import RandomForestClassifier
 import xgboost
+
 import joblib
 
 # from sklearn.model_selection import train_test_split
@@ -130,8 +140,67 @@ def predict():
             "contratara el deposito?": label
         }) 
 
+# Enruta la funcion al endpoint /api/v1/retrain
+
+@app.route('/api/v1/retrain', methods=['GET'])
+def retrain():
+    if os.path.exists("data/bank_new.csv"):
+        data = pd.read_csv('data/bank_new.csv')
+
+        X_train, X_test, y_train, y_test = train_test_split(data.drop(columns=['desposit']),
+                                                            data['deposit'],
+                                                            test_size = 0.20,
+                                                            random_state=42)
+
+        columns_to_exclude = ["poutcome", "contact"]
+        bin_features =['default', 'housing', 'loan']
+        cat_features =['job', 'marital', 'education', 'month']
+        num_features = ['age', 'balance', 'day', 'duration', 'campaign', 'pdays', 'previous']
+        
+        encod_bin = FunctionTransformer(cat_binary, feature_names_out='one-to-one')
+        bin_pipeline = Pipeline([("Binary", encod_bin)])
+        cat_pipeline = Pipeline([("OHEncoder", OneHotEncoder())])
+        num_pipeline = Pipeline([('Standar_Scaler',StandardScaler())])
+        preprocessor = ColumnTransformer(transformers=[("bin", bin_pipeline, bin_features),
+                        ("cat", cat_pipeline, cat_features),
+                        ("num", num_pipeline, num_features),
+                        ("elimina","drop", columns_to_exclude)
+                    ])
+        
+        feature_selector = SelectFromModel(RandomForestClassifier(n_estimators=100, random_state=42))
+
+        model = Pipeline([("preprocessor", preprocessor),
+                            ("feature_selector", feature_selector),
+                            ("classifier", xgboost.XGBClassifier())])
+        
+        # pipe_xgb_param = {'Modelo__n_estimators': [10, 100, 200, 400],
+        #                     'Modelo__max_depth': [1,2,4,8],
+        #                     'Modelo__learning_rate': [0.1,0.2,0.5,1.0],
+        #                     }
+
+        # gs_xgb = GridSearchCV(xgb_pipeline,
+        #                 pipe_xgb_param,
+        #                 cv=cv,
+        #                 scoring=metric,
+        #                 verbose=1,
+        #                 n_jobs=-1)
+
+        model.fit(X_train, y_train)
+        with open('ad_model.pkl', 'wb') as f:
+            joblib.dump(model, f)
+
+        return f"Model retrained. New evaluation metric: {classification_report(y_test, modelo.predict(X_test))}"
+    else:
+        return f"<h2>New data for retrain NOT FOUND. Nothing done!</h2>"
+
+
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+
+
+
 
 # if __name__ == '__main__':
 #     from os import environ
