@@ -194,7 +194,55 @@ def retrain():
         # X_test = data.drop(columns=['deposit'])
         # y_test = data['deposit'].map({'yes': 1, 'no': 0})  # Convertir a numérico
 
-        return f"Model retrained. New evaluation metric: {classification_report(y_test, model.predict(X_test))}"
+        # return f"Model retrained. New evaluation metric: {classification_report(y_test, model.predict(X_test))}"
+    
+        # Pretty classification report
+        y_pred = model.predict(X_test)
+        report_dict = classification_report(y_test, y_pred, output_dict=True)
+
+        # Build an HTML table
+        html = """
+        <h3>Model Retrained Successfully!</h3>
+        <h4>Classification Report:</h4>
+        <table border="1" cellpadding="5" cellspacing="0">
+            <tr>
+                <th>Class</th>
+                <th>Precision</th>
+                <th>Recall</th>
+                <th>F1-Score</th>
+                <th>Support</th>
+            </tr>
+        """
+
+        for label, metrics in report_dict.items():
+            if label not in ('accuracy',):
+                html += f"""
+                <tr>
+                    <td>{label}</td>
+                    <td>{metrics['precision']:.2f}</td>
+                    <td>{metrics['recall']:.2f}</td>
+                    <td>{metrics['f1-score']:.2f}</td>
+                    <td>{metrics['support']}</td>
+                </tr>
+                """
+
+        # Add overall accuracy
+        html += f"""
+            <tr>
+                <td colspan="4" align="right"><strong>Accuracy</strong></td>
+                <td>{report_dict['accuracy']:.2f}</td>
+            </tr>
+        """
+
+        html += "</table>"
+
+        return html
+
+    
+    
+    
+    
+    
     else:
         return f"<h2>New data for retrain NOT FOUND. Nothing done!</h2>"
 
